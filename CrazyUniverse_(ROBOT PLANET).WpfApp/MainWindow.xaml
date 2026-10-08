@@ -49,7 +49,11 @@
                     <Button Content="Crazy Action" Margin="5,0,0,0" Click="CrazyAction_Click"/>
 
                     <Button Content="Charge" Margin="5,0,0,0" Click="Charge_Click"/>
-                    
+
+                    <Button Content="Scan" Margin="5,0,0,0" Click="Scan_Click"/>
+
+                    <Button Content="Repair" Margin="5,0,0,0" Click="Repair_Click"/>
+
                 </WrapPanel>
 
                 <TextBlock Text="Robot Details" FontSize="20" FontWeight="Bold"/>

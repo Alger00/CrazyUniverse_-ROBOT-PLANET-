@@ -23,6 +23,13 @@ namespace CrazyUniverse__ROBOT_PLANET_.Core.Models
 
         public string Scan()
         {
+            if (BatteryLevel < 5)
+            {
+                return $"{Name} is too tired to scan.";
+            }
+
+            BatteryLevel = BatteryLevel - 5;
+
             return $"{Name} scanned a strange object.";
         }
 

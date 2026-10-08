@@ -23,6 +23,11 @@ namespace CrazyUniverse__ROBOT_PLANET_.Core.Models
 
         public string Repair()
         {
+            if (BatteryLevel < 10)
+            {
+                return $"{Name} is too tired to repair.";
+            }
+
             BatteryLevel = BatteryLevel - 10;
 
             return $"{Name} repaired another robot.";

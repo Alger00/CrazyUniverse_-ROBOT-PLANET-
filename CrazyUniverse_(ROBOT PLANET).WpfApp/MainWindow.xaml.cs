@@ -111,5 +111,25 @@ namespace CrazyUniverse__ROBOT_PLANET_.WpfApp
                 LogListBox.Items.Add(message);
             }
         }
+
+        private void Scan_Click(object sender, RoutedEventArgs e)
+        {
+            Robot? selectedRobot = RobotListBox.SelectedItem as Robot;
+
+            if (selectedRobot is IScan scanner)
+            {
+                LogListBox.Items.Add(scanner.Scan());
+            }
+        }
+
+        private void Repair_Click(object sender, RoutedEventArgs e)
+        {
+            Robot? selectedRobot = RobotListBox.SelectedItem as Robot;
+
+            if (selectedRobot is IRepair repairable)
+            {
+                LogListBox.Items.Add(repairable.Repair());
+            }
+        }
     }
 }

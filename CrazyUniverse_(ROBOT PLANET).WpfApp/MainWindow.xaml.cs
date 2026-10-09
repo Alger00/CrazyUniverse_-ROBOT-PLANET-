@@ -52,6 +52,10 @@ namespace CrazyUniverse__ROBOT_PLANET_.WpfApp
                 {
                     Robots.Add(new ExplorerBot(name));
                 }
+                else if (type == "GuardBot")
+                {
+                    Robots.Add(new GuardBot(name));
+                }
                 else
                 {
                     Robots.Add(new RepairBot(name));

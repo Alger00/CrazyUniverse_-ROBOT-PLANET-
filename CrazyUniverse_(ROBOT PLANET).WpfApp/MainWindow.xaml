@@ -35,6 +35,7 @@
                     <ComboBoxItem>CleanerBot</ComboBoxItem>
                     <ComboBoxItem>ExplorerBot</ComboBoxItem>
                     <ComboBoxItem>RepairBot</ComboBoxItem>
+                    <ComboBoxItem>GuardBot</ComboBoxItem>
 
                 </ComboBox>
 

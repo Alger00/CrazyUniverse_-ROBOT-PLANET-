@@ -51,7 +51,20 @@ namespace CrazyUniverse__ROBOT_PLANET_.Core.Models
         public abstract string Work();
 
         public abstract string CrazyAction();
+        public virtual string Greet(Robot newRobot)
+        {
+            return $"{Name} welcomed {newRobot.Name}.";
+        }
 
+        public virtual string Goodbye(Robot removedRobot)
+        {
+            return $"{Name} said goodbye to {removedRobot.Name}.";
+        }
+
+        public virtual string ReactToCrazyAction(Robot actor)
+        {
+            return $"{Name} reacted to {actor.Name}'s crazy action.";
+        }
         public override string ToString()
         {
             return Name;

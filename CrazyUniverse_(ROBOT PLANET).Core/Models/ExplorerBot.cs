@@ -56,5 +56,16 @@ namespace CrazyUniverse__ROBOT_PLANET_.Core.Models
 
             return $"{Name} found a planet made of pizza.";
         }
+        public override string ReactToCrazyAction(Robot actor)
+        {
+            if (BatteryLevel <= 0)
+            {
+                return $"{Name} is too tired to scan the aftermath of {actor.Name}'s crazy action.";
+            }
+
+            BatteryLevel = Math.Max(0, BatteryLevel - 1);
+
+            return $"{Name} scanned the aftermath of {actor.Name}'s crazy action.";
+        }
     }
 }

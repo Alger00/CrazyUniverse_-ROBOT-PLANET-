@@ -5,12 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CrazyUniverse__ROBOT_PLANET_.WpfApp"
         mc:Ignorable="d"
-        Title="Robot Planet" Height="450" Width="800">
+        Title="Robot Planet"
+        Height="800"
+        Width="800">
+
     <Grid>
         <Grid Margin="10">
 
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="220"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
@@ -18,84 +21,92 @@
 
                 <TextBlock Text="Robots" FontSize="18" FontWeight="Bold"/>
 
-                <ListBox x:Name="RobotListBox" ItemsSource="{Binding Robots}" />
-                
+                <ListBox x:Name="RobotListBox" ItemsSource="{Binding Robots}" SelectedItem="{Binding SelectedRobot}"/>
+
+                <TextBlock Text="Search" Margin="0,10,0,5" FontWeight="Bold"/>
+
+                <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
+
+                <ListBox Height="150" Margin="0,5,0,10" ItemsSource="{Binding FilteredRobots}" />
+
+                <TextBlock Text="Robot Summary" FontWeight="Bold"/>
+
+                <ListBox Height="150" ItemsSource="{Binding RobotSummary}" />
+
+                <TextBlock Text="Sorted By Name" Margin="0,10,0,5" FontWeight="Bold"/>
+
+                <ListBox Height="150" ItemsSource="{Binding RobotsByName}" />
+
             </StackPanel>
 
             <StackPanel Grid.Column="1" Margin="20">
 
                 <TextBlock Text="Add Robot" FontSize="18" FontWeight="Bold"/>
 
-                <TextBlock Margin="0,10,0,0" Text="Robot Name:" />
+                <TextBlock Margin="0,10,0,0" Text="Robot Name:"/>
 
-                <TextBox x:Name="NameTextBox" Margin="0,10,0,0" Height="25" />
+                <TextBox Height="25" Text="{Binding RobotName, UpdateSourceTrigger=PropertyChanged}"/>
 
-                <ComboBox x:Name="TypeComboBox" Margin="0,10,0,0" SelectedIndex="0">
-
-                    <ComboBoxItem>CleanerBot</ComboBoxItem>
-                    <ComboBoxItem>ExplorerBot</ComboBoxItem>
-                    <ComboBoxItem>RepairBot</ComboBoxItem>
-                    <ComboBoxItem>GuardBot</ComboBoxItem>
-
-                </ComboBox>
+                <ComboBox Margin="0,10,0,0" ItemsSource="{Binding RobotTypes}" SelectedItem="{Binding SelectedRobotType}"/>
 
                 <WrapPanel Margin="0,10,0,10">
 
-                    <Button Content="Add Robot" Click="AddRobot_Click"/>
+                    <Button Content="Add Robot" Command="{Binding AddRobotCommand}"/>
 
-                    <Button Content="Remove Robot" Margin="5,0,0,0" Click="RemoveRobot_Click"/>
+                    <Button Content="Remove Robot" Margin="5,0,0,0" Command="{Binding RemoveRobotCommand}"/>
 
-                    <Button Content="Work" Margin="5,0,0,0" Click="Work_Click"/>
+                    <Button Content="Work" Margin="5,0,0,0" Command="{Binding WorkCommand}"/>
 
-                    <Button Content="Crazy Action" Margin="5,0,0,0" Click="CrazyAction_Click"/>
+                    <Button Content="Crazy Action" Margin="5,0,0,0" Command="{Binding CrazyActionCommand}"/>
 
-                    <Button Content="Charge" Margin="5,0,0,0" Click="Charge_Click"/>
+                    <Button Content="Charge" Margin="5,0,0,0" Command="{Binding ChargeCommand}"/>
 
-                    <Button Content="Scan" Margin="5,0,0,0" Click="Scan_Click"/>
+                    <Button Content="Scan" Margin="5,0,0,0" Command="{Binding ScanCommand}"/>
 
-                    <Button Content="Repair" Margin="5,0,0,0" Click="Repair_Click"/>
+                    <Button Content="Repair" Margin="5,0,0,0" Command="{Binding RepairCommand}"/>
 
                 </WrapPanel>
 
                 <TextBlock Text="Robot Details" FontSize="20" FontWeight="Bold"/>
 
-                <Grid Margin="0,20,0,0">
+                <Grid Margin="0,10,0,0">
 
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
                     <StackPanel Grid.Column="0">
 
                         <TextBlock Text="Name:" />
 
-                        <TextBlock FontSize="16" Text="{Binding ElementName=RobotListBox, Path=SelectedItem.Name}" />
+                        <TextBlock FontSize="16" Text="{Binding ElementName=RobotListBox, Path=SelectedItem.Name}"/>
 
                     </StackPanel>
 
                     <StackPanel Grid.Column="1">
 
-                        <TextBlock Text="Type:" />
+                        <TextBlock Text="Type:"/>
 
-                        <TextBlock FontSize="16" Text="{Binding ElementName=RobotListBox, Path=SelectedItem.RobotType}" />
+                        <TextBlock FontSize="16" Text="{Binding ElementName=RobotListBox, Path=SelectedItem.RobotType}"/>
 
                     </StackPanel>
 
                 </Grid>
 
-                <TextBlock Margin="0,20,0,0" Text="Battery:"/>
+                <TextBlock Margin="0,10,0,0" Text="Battery:"/>
 
                 <TextBlock FontSize="16" Text="{Binding ElementName=RobotListBox, Path=SelectedItem.BatteryLevel, StringFormat={}{0}%}"/>
 
-                <ProgressBar Margin="0,10,0,0" Height="20" Minimum="0" Maximum="100" Value="{Binding ElementName=RobotListBox, Path=SelectedItem.BatteryLevel, Mode=OneWay}" />
+                <ProgressBar Margin="0,10,0,0" Height="20" Minimum="0" Maximum="100" Value="{Binding ElementName=RobotListBox, Path=SelectedItem.BatteryLevel, Mode=OneWay}"/>
 
-                <TextBlock Margin="0,20,0,5" FontSize="18" FontWeight="Bold" Text="Log" />
+                <TextBlock Margin="0,20,0,5" FontSize="18" FontWeight="Bold" Text="Log"/>
 
-                <ListBox x:Name="LogListBox" Height="356" />
+                <ListBox x:Name="LogListBox" Height="356" ItemsSource="{Binding LogMessages}"/>
 
             </StackPanel>
 
         </Grid>
     </Grid>
+
 </Window>

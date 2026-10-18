@@ -47,7 +47,10 @@ namespace CrazyUniverse__ROBOT_PLANET_.WpfApp.ViewModels
             "CleanerBot",
             "ExplorerBot",
             "RepairBot",
-            "GuardBot"
+            "GuardBot",
+            "SoldierBot",
+            "GeneralBot",
+            "TankBot"
         };
         private string robotName = "";
         public string RobotName
@@ -149,6 +152,18 @@ namespace CrazyUniverse__ROBOT_PLANET_.WpfApp.ViewModels
 
                 case "GuardBot":
                     robot = new GuardBot(RobotName);
+                    break;
+
+                case "SoldierBot":
+                    robot = new SoldierBot(RobotName);
+                    break;
+
+                case "GeneralBot":
+                    robot = new GeneralBot(RobotName);
+                    break;
+
+                case "TankBot":
+                    robot = new TankBot(RobotName);
                     break;
 
                 default:

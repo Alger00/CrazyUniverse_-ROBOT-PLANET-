@@ -2,6 +2,9 @@
 using CrazyUniverse__ROBOT_PLANET_.Core.Models;
 using CrazyUniverse__ROBOT_PLANET_.Core.Repositories;
 using CrazyUniverse__ROBOT_PLANET_.WpfApp.Commands;
+using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Linq;
 using System;
 using System.Collections.Generic;
@@ -18,6 +21,33 @@ namespace CrazyUniverse__ROBOT_PLANET_.WpfApp.ViewModels
         private readonly Repository<Robot> robotRepository;
         public ObservableCollection<string> LogMessages { get; } = new();
         public ObservableCollection<Robot> Robots { get; } = new();
+        public ObservableCollection<SimulationResult> SimulationResults { get; } = new();
+        private CancellationTokenSource? cancellationTokenSource;
+        private int workload = 10000000;
+        public int Workload
+        {
+            get => workload;
+            set
+            {
+                workload = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Workload)));
+            }
+        }
+        private List<RobotSnapshot> CreateSnapshots()
+        {
+            List<Robot> robots = new();
+
+            if (SimulationRobot1 != null)
+                robots.Add(SimulationRobot1);
+
+            if (SimulationRobot2 != null)
+                robots.Add(SimulationRobot2);
+
+            if (SimulationRobot3 != null)
+                robots.Add(SimulationRobot3);
+
+            return robots.Select(r => new RobotSnapshot{Name = r.Name, Type = r.RobotType, BatteryLevel = r.BatteryLevel}).ToList();
+        }
         public RelayCommand AddRobotCommand { get; }
         public RelayCommand RemoveRobotCommand { get; }
         public RelayCommand CrazyActionCommand { get; }
@@ -25,8 +55,10 @@ namespace CrazyUniverse__ROBOT_PLANET_.WpfApp.ViewModels
         public RelayCommand ChargeCommand { get; }
         public RelayCommand ScanCommand { get; }
         public RelayCommand RepairCommand { get; }
+        public RelayCommand RunSequentialCommand { get; }
+        public RelayCommand RunParallelCommand { get; }
+        public RelayCommand CancelCommand { get; }
         private string searchText = "";
-
         public string SearchText
         {
             get => searchText;
@@ -92,6 +124,36 @@ namespace CrazyUniverse__ROBOT_PLANET_.WpfApp.ViewModels
                 RepairCommand.RaiseCanExecuteChanged();
             }
         }
+        private Robot? simulationRobot1;
+        public Robot? SimulationRobot1
+        {
+            get => simulationRobot1;
+            set
+            {
+                simulationRobot1 = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SimulationRobot1)));
+            }
+        }
+        private Robot? simulationRobot2;
+        public Robot? SimulationRobot2
+        {
+            get => simulationRobot2;
+            set
+            {
+                simulationRobot2 = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SimulationRobot2)));
+            }
+        }
+        private Robot? simulationRobot3;
+        public Robot? SimulationRobot3
+        {
+            get => simulationRobot3;
+            set
+            {
+                simulationRobot3 = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SimulationRobot3)));
+            }
+        }
         public MainViewModel()
         {
             robotRepository = new Repository<Robot>();
@@ -103,6 +165,9 @@ namespace CrazyUniverse__ROBOT_PLANET_.WpfApp.ViewModels
             ChargeCommand = new RelayCommand(DoCharge, () => SelectedRobot != null);
             ScanCommand = new RelayCommand(DoScan, () => SelectedRobot is ExplorerBot);
             RepairCommand = new RelayCommand(DoRepair, () => SelectedRobot is IRepair);
+            RunSequentialCommand = new RelayCommand(async () => await RunSequential());
+            RunParallelCommand = new RelayCommand(async () => await RunParallel());
+            CancelCommand = new RelayCommand(CancelSimulation);
 
             robotRepository.CharacterAdded += Repository_CharacterAdded;
             robotRepository.CharacterRemoved += Repository_CharacterRemoved;
@@ -248,6 +313,108 @@ namespace CrazyUniverse__ROBOT_PLANET_.WpfApp.ViewModels
             {
                 LogMessages.Add(repairable.Repair());
             }
+        }
+        private void CancelSimulation()
+        {
+            cancellationTokenSource?.Cancel();
+        }
+        private SimulationResult RunRobotSimulation(RobotSnapshot robot, int workload, CancellationToken token)
+        {
+            Stopwatch sw = Stopwatch.StartNew();
+
+            try
+            {
+
+                if (robot.Name == "BrokenBot")
+                {
+                    throw new Exception("Simulation failed");
+                }
+
+                double result = 0;
+
+                for (int i = 0; i < workload; i++)
+                {
+                    token.ThrowIfCancellationRequested();
+
+                    result += Math.Sqrt(i);
+                }
+
+                sw.Stop();
+
+                return new SimulationResult
+                {
+                    RobotName = robot.Name,
+                    Status = "Success",
+                    Result = result,
+                    DurationMs = sw.ElapsedMilliseconds
+                };
+            }
+            catch (OperationCanceledException)
+            {
+                sw.Stop();
+
+                return new SimulationResult
+                {
+                    RobotName = robot.Name,
+                    Status = "Cancelled",
+                    DurationMs = sw.ElapsedMilliseconds
+                };
+            }
+            catch (Exception ex)
+            {
+                sw.Stop();
+
+                return new SimulationResult
+                {
+                    RobotName = robot.Name,
+                    Status = "Failed",
+                    DurationMs = sw.ElapsedMilliseconds,
+                    ErrorMessage = ex.Message
+                };
+            }
+        }
+        private async Task RunSequential()
+        {
+            SimulationResults.Clear();
+
+            cancellationTokenSource = new CancellationTokenSource();
+
+            Stopwatch total = Stopwatch.StartNew();
+
+            List<RobotSnapshot> snapshots = CreateSnapshots();
+
+            foreach (RobotSnapshot robot in snapshots)
+            {
+                SimulationResult result = await Task.Run(() =>RunRobotSimulation(robot, Workload, cancellationTokenSource.Token));
+
+                SimulationResults.Add(result);
+            }
+
+            total.Stop();
+
+            LogMessages.Add($"Sequential Total Time: {total.ElapsedMilliseconds} ms");
+        }
+        private async Task RunParallel()
+        {
+            SimulationResults.Clear();
+
+            cancellationTokenSource = new CancellationTokenSource();
+
+            Stopwatch total = Stopwatch.StartNew();
+            List<RobotSnapshot> snapshots = CreateSnapshots();
+
+            List<Task<SimulationResult>> tasks = snapshots.Select(robot => Task.Run(() => RunRobotSimulation(robot, Workload, cancellationTokenSource.Token))).ToList();
+
+            SimulationResult[] results = await Task.WhenAll(tasks);
+
+            foreach (SimulationResult result in results)
+            {
+                SimulationResults.Add(result);
+            }
+
+            total.Stop();
+
+            LogMessages.Add($"Parallel Total Time: {total.ElapsedMilliseconds} ms");
         }
     }
 }

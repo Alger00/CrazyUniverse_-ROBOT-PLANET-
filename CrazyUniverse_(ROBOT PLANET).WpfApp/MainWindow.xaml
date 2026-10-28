@@ -39,17 +39,17 @@
 
             </StackPanel>
 
-            <StackPanel Grid.Column="1" Margin="20">
+            <StackPanel Grid.Column="1" Margin="5">
 
                 <TextBlock Text="Add Robot" FontSize="18" FontWeight="Bold"/>
 
-                <TextBlock Margin="0,10,0,0" Text="Robot Name:"/>
+                <TextBlock Margin="0,5,0,0" Text="Robot Name:"/>
 
                 <TextBox Height="25" Text="{Binding RobotName, UpdateSourceTrigger=PropertyChanged}"/>
 
-                <ComboBox Margin="0,10,0,0" ItemsSource="{Binding RobotTypes}" SelectedItem="{Binding SelectedRobotType}"/>
+                <ComboBox Margin="0,5,0,0" ItemsSource="{Binding RobotTypes}" SelectedItem="{Binding SelectedRobotType}"/>
 
-                <WrapPanel Margin="0,10,0,10">
+                <WrapPanel Margin="0,5,0,0">
 
                     <Button Content="Add Robot" Command="{Binding AddRobotCommand}"/>
 
@@ -69,7 +69,7 @@
 
                 <TextBlock Text="Robot Details" FontSize="20" FontWeight="Bold"/>
 
-                <Grid Margin="0,10,0,0">
+                <Grid Margin="0,5,0,0">
 
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -94,19 +94,72 @@
 
                 </Grid>
 
-                <TextBlock Margin="0,10,0,0" Text="Battery:"/>
+                <TextBlock Margin="0,5,0,0" Text="Battery:"/>
 
                 <TextBlock FontSize="16" Text="{Binding ElementName=RobotListBox, Path=SelectedItem.BatteryLevel, StringFormat={}{0}%}"/>
 
-                <ProgressBar Margin="0,10,0,0" Height="20" Minimum="0" Maximum="100" Value="{Binding ElementName=RobotListBox, Path=SelectedItem.BatteryLevel, Mode=OneWay}"/>
+                <ProgressBar Margin="0,5,0,0" Height="20" Minimum="0" Maximum="100" Value="{Binding ElementName=RobotListBox, Path=SelectedItem.BatteryLevel, Mode=OneWay}"/>
 
-                <TextBlock Margin="0,20,0,5" FontSize="18" FontWeight="Bold" Text="Log"/>
+                <TextBlock Text="Simulation" FontSize="18" FontWeight="Bold" Margin="0,5,0,5"/>
 
-                <ListBox x:Name="LogListBox" Height="356" ItemsSource="{Binding LogMessages}"/>
+                <TextBlock Text="Workload:"/>
+
+                <TextBox Width="120" Text="{Binding Workload}"/>
+
+                <TextBlock Text="Simulation Robots" FontWeight="Bold" Margin="0,5,0,5"/>
+
+                <WrapPanel Margin="0,5,0,0">
+
+                    <ComboBox Width="120" Margin="0,0,5,0" ItemsSource="{Binding Robots}" SelectedItem="{Binding SimulationRobot1}"/>
+
+                    <ComboBox Width="120" Margin="0,0,5,0" ItemsSource="{Binding Robots}" SelectedItem="{Binding SimulationRobot2}"/>
+
+                    <ComboBox Width="120" ItemsSource="{Binding Robots}" SelectedItem="{Binding SimulationRobot3}"/>
+
+                </WrapPanel>
+
+                <WrapPanel Margin="0,5,0,0">
+
+                    <Button Content="Run Sequential" Command="{Binding RunSequentialCommand}"/>
+
+                    <Button Content="Run Parallel" Margin="10,0,0,0" Command="{Binding RunParallelCommand}"/>
+
+                    <Button Content="Cancel" Margin="10,0,0,0" Command="{Binding CancelCommand}"/>
+
+                </WrapPanel>
+
+                <TextBlock Text="Simulation Results" FontSize="18" FontWeight="Bold" Margin="0,5,0,5"/>
+
+                <ListView Height="100" ItemsSource="{Binding SimulationResults}">
+
+                    <ListView.View>
+
+                        <GridView>
+
+                            <GridViewColumn Header="Robot" Width="100" DisplayMemberBinding="{Binding RobotName}"/>
+
+                            <GridViewColumn Header="Status" Width="65" DisplayMemberBinding="{Binding Status}"/>
+
+                            <GridViewColumn Header="Result" Width="150" DisplayMemberBinding="{Binding Result}"/>
+
+                            <GridViewColumn Header="Duration" Width="100" DisplayMemberBinding="{Binding DurationMs}"/>
+
+                            <GridViewColumn Header="Error" Width="100" DisplayMemberBinding="{Binding ErrorMessage}"/>
+
+                        </GridView>
+
+                    </ListView.View>
+
+                </ListView>
+
+                <TextBlock Margin="0,5,0,0" FontSize="18" FontWeight="Bold" Text="Log"/>
+
+                <ListBox x:Name="LogListBox" Height="165" ItemsSource="{Binding LogMessages}"/>
 
             </StackPanel>
 
         </Grid>
+        
     </Grid>
 
 </Window>
